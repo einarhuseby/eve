@@ -1259,7 +1259,19 @@ Let's see an overview of what events are available:
 +-------+--------+------+--------------------------------------------------+
 |Action |What    |When  |Event name / method signature                     |
 +=======+========+======+==================================================+
-|Fetch  |Resource|After || ``on_fetched_resource``                         |
+|Fetch  |Resource|Before|| ``on_fetch_resource``                           |
+|       |        |      || ``def event(resource_name,lookup)``             |
+|       |        |      +--------------------------------------------------+
+|       |        |      || ``on_fetch_resource_<resource_name>``           |
+|       |        |      || ``def event(lookup)``                           |
+|       +--------+------+--------------------------------------------------+
+|       |Item    |Before|| ``on_fetch_item``                               |
+|       |        |      || ``def event(resource_name, lookup)``            |
+|       |        |      +--------------------------------------------------+
+|       |        |      || ``on_fetch_item_<resource_name>``               |
+|       |        |      || ``def event(lookup)``                           |
+|       +--------+------+--------------------------------------------------+
+|       |Resource|After || ``on_fetched_resource``                         |
 |       |        |      || ``def event(resource_name, response)``          |
 |       |        |      +--------------------------------------------------+
 |       |        |      || ``on_fetched_resource_<resource_name>``         |

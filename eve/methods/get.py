@@ -199,6 +199,9 @@ def _perform_aggregation(resource, pipeline, options):
 
 def _perform_find(resource, lookup):
     """
+    .. versionchanged:: 0.8.2
+       Added ``on_fetch*`` event hooks to be able to modify lookup
+       before performing find.
     .. versionadded:: 0.7
     """
     documents = []
@@ -212,6 +215,10 @@ def _perform_find(resource, lookup):
 
     # If-Modified-Since disabled on collections (#334)
     req.if_modified_since = None
+
+    # on_fetch* to be able to modify lookup
+    getattr(app, "on_fetch")(resource, lookup)
+    getattr(app, "on_fetch_%s" % resource)(lookup)
 
     cursor = app.data.find(resource, req, lookup)
     # If soft delete is enabled, data.find will not include items marked
@@ -280,6 +287,8 @@ def getitem_internal(resource, **lookup):
     :param **lookup: the lookup query.
 
     .. versionchanged:: 0.8.2
+       Added ``on_fetch_item*`` event hooks to be able to modify lookup
+       before fin_one is called.
        Prevent extra hateoas links from overwriting
        already existed data relation hateoas links.
 
@@ -343,6 +352,10 @@ def getitem_internal(resource, **lookup):
         # GET requests should always fetch soft deleted documents from the db
         # They are handled and included in 404 responses below.
         req.show_deleted = True
+
+    # on_fetch_item* to be able to modify lookup
+    getattr(app, "on_fetch_item")(resource, lookup)
+    getattr(app, "on_fetch_item_%s" % resource)(lookup)
 
     document = app.data.find_one(resource, req, **lookup)
     if not document:
